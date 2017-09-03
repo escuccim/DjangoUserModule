@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Profile{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Edit Your Profile</h1>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% if message %}
+                {% if errors %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% else %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endif %}
+            {% endif %}
+            <form id="user_form" method="post" action="{% url 'register:profile' %}" class="form form-horizontal" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in user_form.visible_fields %}
+                    <div class="form-group">
+                        {{ field.errors }}
+                        <label class="control-label col-md-2">{{  field.label }}</label>
+                        <div class="col-md-10">
+                            {{  field }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% for field in profile_form.visible_fields %}
+                    <div class="form-group">
+                         {{ field.errors }}
+                        <label class="control-label col-md-2">{{  field.label }}</label>
+                        <div class="col-md-10">
+                            {{  field }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="form-group">
+                    <div class="col-md-12 text-center">
+                        <button class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

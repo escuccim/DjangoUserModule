@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% if user.is_authenticated %}
+                <p>You are already logged in!</p>
+            {% else %}
+                {% if errors %}
+                    <div class="alert alert-danger">{{ errors }}</div>
+                {% endif %}
+                <form id="login_form" method="post" action="{% url 'register:login' %}" class="form form-horizontal">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Username:</label>
+                        <div class="col-md-10">
+                            <input type="text" name="username" value="" size="50" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Password:</label>
+                        <div class="col-md-10">
+                            <input type="password" name="password" value="" size="50" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12 text-center">
+                            <button class="btn btn-primary" type="submit" value="submit">Login</button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

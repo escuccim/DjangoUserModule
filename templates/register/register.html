@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Register with Rango{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Register</h1>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {%  if registered %}
+                <p>Thank you for registering!</p>
+                <p><a href="{% url 'blog:index' %}">Back to home page</a>
+            {%  else %}
+                <form id="user_form" method="post" action="{% url 'register:register' %}" class="form form-horizontal" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in user_form %}
+                        <div class="form-group">
+                            <label class="control-label col-md-2">{{  field.label }}</label>
+                            <div class="col-md-10">
+                                {{  field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% for field in profile_form.visible_fields %}
+                        <div class="form-group">
+                            <label class="control-label col-md-2">{{  field.label }}</label>
+                            <div class="col-md-10">
+                                {{  field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <div class="col-md-12 text-center">
+                            <button class="btn btn-primary">Register</button>
+                        </div>
+                    </div>
+                </form>
+            {%  endif %}
+        </div>
+    </div>
+
+{% endblock %}
