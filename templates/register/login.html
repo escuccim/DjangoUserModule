@@ -31,6 +31,12 @@
                             <button class="btn btn-primary" type="submit" value="submit">Login</button>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <a href="{% url 'register:requestresetpassword' %}">Forgot your password?</a>
+                        </div>
+                    </div>
                 </form>
             {% endif %}
         </div>
