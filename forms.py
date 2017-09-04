@@ -11,11 +11,23 @@ class BootstrapModelForm(forms.ModelForm):
                 'class': 'form-control'
             })
 
+
+class BootstrapForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(BootstrapForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+
 class UserForm(BootstrapModelForm):
     username = forms.CharField()
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput())
     confirm_password = forms.CharField(widget=forms.PasswordInput())
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
 
     def clean(self):
         cleaned_data = super(UserForm, self).clean()
@@ -27,7 +39,7 @@ class UserForm(BootstrapModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'confirm_password',]
+        fields = ['username', 'email', 'password', 'confirm_password','first_name', 'last_name']
 
 
 class UserProfileForm(BootstrapModelForm):
@@ -35,7 +47,7 @@ class UserProfileForm(BootstrapModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name', 'image']
+        fields = ['image']
 
 
 class UserFormWithoutPassword(BootstrapModelForm):
@@ -44,7 +56,7 @@ class UserFormWithoutPassword(BootstrapModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 
 class PasswordForm(BootstrapModelForm):
@@ -56,16 +68,43 @@ class PasswordForm(BootstrapModelForm):
         # clean the data
         cleaned_data = super(PasswordForm, self).clean()
 
-        # check that the old password is correct
-        old_password = cleaned_data.get('old_password')
-
         # check that the passwords match
         new_password = cleaned_data.get('new_password')
         confirm_password = cleaned_data.get('confirm_password')
 
         if new_password != confirm_password:
-            raise forms.ValidationError("Your password does not match")
+            msg = "Your passwords do not match"
+            self.add_error('new_password', msg)
 
     class Meta:
         model = User
         fields = ['old_password', 'new_password', 'confirm_password', ]
+
+
+class PasswordResetForm(BootstrapForm):
+    email = forms.EmailField()
+
+    class Meta:
+        fields = ['email',]
+
+
+class ChangePasswordForm(BootstrapModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+    confirm_password = forms.CharField(widget=forms.PasswordInput())
+
+    # check that the passwords match
+    def clean(self):
+        cleaned_data = super(ChangePasswordForm, self).clean()
+
+        # check that the passwords match
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        # if not add an error
+        if password != confirm_password:
+            msg = "Your passwords do not match"
+            self.add_error('password', msg)
+
+    class Meta:
+        model = User
+        fields = ['password', 'confirm_password']

@@ -2,10 +2,15 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from .forms import UserForm, UserProfileForm, UserFormWithoutPassword, PasswordForm
+from .forms import UserForm, UserProfileForm, UserFormWithoutPassword, PasswordForm, PasswordResetForm, ChangePasswordForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render,redirect, HttpResponse
 from .models import UserProfile
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from django.template import loader
+from django.conf import settings
 
 # Create your views here.
 def Logout(request):
@@ -124,3 +129,68 @@ def ChangePassword(request):
         password_form = PasswordForm(instance=user)
 
     return render(request, 'register/changepassword.html', { 'password_form': password_form, 'message' : message, 'errors': errors})
+
+
+def RequestPasswordReset(request):
+    user = request.user
+    errors = None
+
+    if user.is_authenticated():
+        return redirect('register:changepassword')
+
+    if request.method == 'POST':
+        password_reset_form = PasswordResetForm(data=request.POST)
+
+        if password_reset_form.is_valid():
+            user = User.objects.filter(email=password_reset_form.cleaned_data.get("email"))[0]
+            if user:
+                # if the user is valid create a reset token
+                profile = user.userprofile
+                profile.password_token = get_random_string(length=20)
+                profile.save()
+
+                # then email it to the user with a link
+                html_message = loader.render_to_string('register/password_reset_email_template.html', { 'profile' : profile })
+
+                send_mail('Your password reset', html_message, profile.user.email, [settings.DEFAULT_FROM_EMAIL],fail_silently=False, html_message=html_message)
+
+            else:
+                errors = 'This email does not match our system!'
+
+    else:
+        password_reset_form = PasswordResetForm()
+
+    return render(request, 'register/request_passwordreset.html', {'password_reset_form': password_reset_form, 'errors': errors})
+
+
+def ResetPassword(request, id, token):
+    user = User.objects.get(pk=id)
+    errors = None
+    message = None
+
+    if user.userprofile.password_token != token:
+        errors = 'This password reset link is not valid!'
+
+    if request.method == 'POST':
+        password_form = ChangePasswordForm(data=request.POST)
+
+        if password_form.is_valid():
+            # update the password
+            user.set_password(password_form.cleaned_data.get('password'))
+            user.save()
+
+            # erase the token
+            user.userprofile.password_token = ''
+            user.userprofile.save()
+
+            # return a success message
+            message = "Your password has been successfully updated!"
+
+            return redirect('register:login')
+        else:
+            errors = "Please correct the errors below!"
+
+    else:
+        password_form = ChangePasswordForm(instance=user)
+
+    return render(request, 'register/reset_password_form.html', { 'password_form': password_form, 'errors' : errors, 'message' : message, 'user': user, 'token' : token })

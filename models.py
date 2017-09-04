@@ -7,10 +7,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    email = models.EmailField(max_length=50)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
     image = models.ImageField(null=True, blank=True)
+    password_token = models.CharField(max_length=32, null=True, blank=True)
 
     def __unicode__(self):
-        return self.first_name + ' ' + self.last_name
+        return self.user.first_name + ' ' + self.user.last_name
