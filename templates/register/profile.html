@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Your Profile{% endblock %}
+{% block title %}{% trans "Your Profile" %}{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Edit Your Profile</h1>
+            <h1>{% trans "Edit Your Profile" %}</h1>
         </div>
     </div>
 
@@ -42,7 +43,7 @@
 
                 <div class="form-group">
                     <div class="col-md-12 text-center">
-                        <button class="btn btn-primary">Update</button>
+                        <button class="btn btn-primary">{% trans "Update" %}</button>
                     </div>
                 </div>
             </form>

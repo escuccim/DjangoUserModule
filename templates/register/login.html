@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{% trans "Login" %}{% endblock %}
 
 {% block body %}
     <div class="panel panel-default">
         <div class="panel-body">
             {% if user.is_authenticated %}
-                <p>You are already logged in!</p>
+                <p>{% trans "You are already logged in!" %}</p>
             {% else %}
                 {% if errors %}
                     <div class="alert alert-danger">{{ errors }}</div>
@@ -14,13 +15,13 @@
                 <form id="login_form" method="post" action="{% url 'register:login' %}" class="form form-horizontal">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label class="control-label col-md-2">Username:</label>
+                        <label class="control-label col-md-2">{% trans "Username" %}:</label>
                         <div class="col-md-10">
                             <input type="text" name="username" value="" size="50" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-2">Password:</label>
+                        <label class="control-label col-md-2">{% trans "Password" %}:</label>
                         <div class="col-md-10">
                             <input type="password" name="password" value="" size="50" class="form-control" />
                         </div>
@@ -28,13 +29,13 @@
 
                     <div class="form-group">
                         <div class="col-md-12 text-center">
-                            <button class="btn btn-primary" type="submit" value="submit">Login</button>
+                            <button class="btn btn-primary" type="submit" value="submit">{% trans "Login" %}</button>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <a href="{% url 'register:requestresetpassword' %}">Forgot your password?</a>
+                            <a href="{% url 'register:requestresetpassword' %}">{% trans "Forgot your password?" %}</a>
                         </div>
                     </div>
                 </form>
