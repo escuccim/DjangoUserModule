@@ -11,6 +11,7 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.template import loader
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 # Create your views here.
 def Logout(request):
@@ -30,9 +31,9 @@ def Login(request):
                 login(request,user)
                 return redirect('/')
             else:
-                return HttpResponse('Your account is inactive!')
+                return HttpResponse(_('Your account is inactive!'))
         else:
-            errors = 'Your login details are incorrect!'
+            errors = _('Your login details are incorrect!')
     else:
         return render(request, 'register/login.html', {'errors': errors})
 
@@ -89,10 +90,11 @@ def Profile(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_form.save()
-            message = 'Your profile has been updated!'
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            message = _('Your profile has been updated!')
         else:
-            message = 'Please correct the errors below!'
+            message = _('Please correct the errors below!')
             errors = True
     else:
         user_form = UserFormWithoutPassword(instance=user)
@@ -116,13 +118,13 @@ def ChangePassword(request):
             old_password = password_form.cleaned_data.get('old_password')
 
             if not user.check_password(old_password):
-                message = 'Your old password is incorrect!'
+                message = _('Your old password is incorrect!')
                 errors = True
             else:
                 password_form.save()
-                message = 'Your password has been updated!'
+                message = _('Your password has been updated!')
         else:
-            message = 'Please correct the errors below!'
+            message = _('Please correct the errors below!')
             errors = True
 
     else:
@@ -155,7 +157,7 @@ def RequestPasswordReset(request):
                 send_mail('Your password reset', html_message, profile.user.email, [settings.DEFAULT_FROM_EMAIL],fail_silently=False, html_message=html_message)
 
             else:
-                errors = 'This email does not match our system!'
+                errors = _('This email does not match our system!')
 
     else:
         password_reset_form = PasswordResetForm()
@@ -169,7 +171,7 @@ def ResetPassword(request, id, token):
     message = None
 
     if user.userprofile.password_token != token:
-        errors = 'This password reset link is not valid!'
+        errors = _('This password reset link is not valid!')
 
     if request.method == 'POST':
         password_form = ChangePasswordForm(data=request.POST)
@@ -184,11 +186,11 @@ def ResetPassword(request, id, token):
             user.userprofile.save()
 
             # return a success message
-            message = "Your password has been successfully updated!"
+            message = _("Your password has been successfully updated!")
 
             return redirect('register:login')
         else:
-            errors = "Please correct the errors below!"
+            errors = _("Please correct the errors below!")
 
     else:
         password_form = ChangePasswordForm(instance=user)

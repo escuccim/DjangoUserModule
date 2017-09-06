@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{% trans "Register" %}{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Register</h1>
+            <h1>{% trans "Register" %}</h1>
         </div>
     </div>
 
     <div class="panel panel-default">
         <div class="panel-body">
             {%  if registered %}
-                <p>Thank you for registering!</p>
-                <p><a href="{% url 'blog:index' %}">Back to home page</a>
+                <p>{% trans "Thank you for registering!" %}</p>
+                <p><a href="{% url 'blog:index' %}">{% trans "Back to home page" %}</a>
             {%  else %}
                 <form id="user_form" method="post" action="{% url 'register:register' %}" class="form form-horizontal" enctype="multipart/form-data">
                     {% csrf_token %}
