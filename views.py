@@ -34,8 +34,8 @@ def Login(request):
                 return HttpResponse(_('Your account is inactive!'))
         else:
             errors = _('Your login details are incorrect!')
-    else:
-        return render(request, 'register/login.html', {'errors': errors})
+
+    return render(request, 'register/login.html', {'errors': errors})
 
 def Register(request):
     registered = False
