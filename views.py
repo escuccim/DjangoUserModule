@@ -81,7 +81,7 @@ def Profile(request):
     except:
         profile = UserProfile()
 
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return redirect('register:login')
 
     if request.method == 'POST':
@@ -108,7 +108,7 @@ def ChangePassword(request):
     message = None
     errors = False
 
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return redirect('register:login')
 
     if request.method == 'POST':
@@ -137,7 +137,7 @@ def RequestPasswordReset(request):
     user = request.user
     errors = None
 
-    if user.is_authenticated():
+    if user.is_authenticated:
         return redirect('register:changepassword')
 
     if request.method == 'POST':
