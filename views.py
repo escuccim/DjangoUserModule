@@ -63,7 +63,7 @@ def Register(request):
 
         else:
             return HttpResponse(user_form.errors)
-            print user_form.errors, profile_form.errors
+            print(user_form.errors, profile_form.errors)
 
     else:
         user_form = UserForm()
